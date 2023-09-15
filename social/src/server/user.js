@@ -136,3 +136,19 @@ export const updateUser=async(userId,name,address)=>{
 //     console.log(error)
 //   }
 // }
+
+
+
+export const getUser=async(userId)=>{
+  try {
+    const {data,error}=await supabase.from("user").select("*").eq("id",userId)
+
+    if(data){
+      return data;
+    }
+    console.log(error)
+    
+  } catch (error) {
+    console.log(error)
+  }
+}

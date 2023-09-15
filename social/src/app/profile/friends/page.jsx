@@ -44,7 +44,7 @@ useEffect(()=>{
     if(data){
         alert("getting all users")
         setAllusers(data)
-        console.log("all users",data)
+       
     }
 
     console.log(data.error)
@@ -53,8 +53,16 @@ useEffect(()=>{
   getAllUsers()
 
 
-  console.log("sdnvonfs",allusers)
+  
 },[])
+
+
+
+console.log("all users",allusers)
+
+useEffect(()=>{
+  // console.log("state---",state)
+},[state])
 
 
   return (
@@ -67,7 +75,7 @@ useEffect(()=>{
                 {allusers && 
                   allusers?.map((item)=>{
                     return <>
-                           <Friends avatar={item?.avatar} name={item?.name}></Friends>
+                           <Friends friendId={item?.id} userId={state?.userId} avatar={item?.avatar} name={item?.name}></Friends>
                     </>
                   })
                 }

@@ -8,6 +8,9 @@ import { postContext } from "@/context/PostContextProvider";
 
 import { getAllComment } from "@/server/posts";
 
+
+
+
 export default function PostPage(props) {
   const { posts, postDispatch, allComments } = useContext(postContext);
 
@@ -16,6 +19,9 @@ export default function PostPage(props) {
   //comment
 
   // const [allComments,setAllComments]=useState([])
+
+
+ 
 
   const fetchComments = async () => {
     const data = await getAllComment();
@@ -29,6 +35,7 @@ export default function PostPage(props) {
 
   useEffect(() => {
     fetchComments();
+   
   }, []);
 
   return (
@@ -36,6 +43,7 @@ export default function PostPage(props) {
       <div className="w-full h-full p-2 ">
         {postorender?.map((item) => (
           <Post
+            alldata={item}
             key={item.id}
             id={item.id}
             content={item.content}

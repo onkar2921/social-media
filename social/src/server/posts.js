@@ -173,7 +173,8 @@ export const deletePostFromTbale = async (postId, userId) => {
     const { data, error } = await supabase
       .from("posts")
       .delete()
-      .eq("id", postId, "author", userId);
+      .eq("id", postId)
+      .eq("author",userId);
 
     alert("post deletd");
     return data;

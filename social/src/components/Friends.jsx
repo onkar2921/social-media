@@ -1,7 +1,72 @@
+'use client'
 import React from 'react'
 import Card from './Card'
 import Image from 'next/image'
+
+import { useEffect,useState } from 'react';
+import { addFriend } from '@/server/friends';
+import { getRelatedFriends } from '@/server/friends';
+import { removeFriend } from '@/server/friends';
+import { getMutualFriends } from '@/server/friends';
+
+
 export default function Friends(props) {
+
+
+  // console.log("friends props",props?.userId,props.friendId)
+  
+  const handleFriend=async()=>{
+      const data=await addFriend(props?.userId,props.friendId)
+
+      if(data){
+        alert("friend added")
+        setChange(true)
+      }
+
+  }
+
+
+  const [change,setChange]=useState(false)
+
+  const getFriendsOfUser=async()=>{
+    const data=await getRelatedFriends(props?.userId)
+
+    if(data){
+      // console.log("related friends ",data)
+      data?.filter((item)=>{
+        // console.log("item",item)
+        if(item.friends===props?.friendId){
+          setChange(true)
+        }
+    })
+
+
+    }
+  }
+
+  const [mutual,setMutual]=useState([])
+  const MutualFriends=async()=>{
+    const data=await getMutualFriends(props?.userId,props.friendId)
+    if(data){
+      setMutual(data)
+    }
+  }
+
+  useEffect(()=>{
+    getFriendsOfUser()
+
+    MutualFriends()
+  },[props?.userId])
+
+const len=mutual?.length
+
+
+  const handleFriendRemove=async()=>{
+    const data=await removeFriend(props?.userId,props.friendId)
+    if(data){
+      setChange(false)
+    }
+  }
   return (
     <>
     <Card>
@@ -11,8 +76,11 @@ export default function Friends(props) {
                 </div>
                 <div>
                     <h2>{props?.name}</h2>
-                    <p>5 mutual friends</p>
+                    <p>{len} mutual friends</p>
                 </div>
+                {
+                  change? <button className='shadow-md  m-5 rounded-md' onClick={handleFriendRemove}>Remove Friend</button> : <button className='shadow-md  m-5 rounded-md' onClick={handleFriend}>Add Friend</button>
+                }
             </div>
         </Card>
     </>
