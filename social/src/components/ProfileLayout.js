@@ -69,6 +69,7 @@ export default function ProfileLayout({children,...props}) {
       // console.log("back to display", data);
     }
   };
+  
 
   useEffect(() => {
     getBackground();
