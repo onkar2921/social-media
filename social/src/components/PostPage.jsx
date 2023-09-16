@@ -41,13 +41,14 @@ export default function PostPage(props) {
   return (
     <>
       <div className="w-full h-full p-2 ">
+
         {postorender?.map((item) => (
           <Post
             alldata={item}
             key={item.id}
             id={item.id}
             content={item.content}
-            photo={item.photos[0].data}
+            photo={item?.photos[0]?.data}
             comments={allComments}
           ></Post>
         ))}

@@ -29,6 +29,33 @@ export const createPost = async (userId, content, photos) => {
   }
 };
 
+
+export const getLastPostOfUser=async(userId)=>{
+  try {
+
+    const { data ,error } = await supabase
+    .from("posts")
+    .select("*")
+    .eq("author", userId)
+    .order("created_at", { ascending: false }) 
+    .limit(1); 
+  
+
+    const lastInsertedData = data[0]; // Get the first (and only) record
+  
+    if (lastInsertedData) {
+      console.log("Last inserted data:", lastInsertedData);
+      return lastInsertedData
+    } else {
+      console.log("No data found.");
+    }
+  
+    
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 export const getAllPosts = async () => {
   try {
     const { data, error } = await supabase.from("posts").select("*");
@@ -173,7 +200,7 @@ export const deletePostFromTbale = async (postId, userId) => {
     const { data, error } = await supabase
       .from("posts")
       .delete()
-      .eq("id", postId)
+      .eq("id", postId, "author", userId)
       .eq("author",userId);
 
     alert("post deletd");

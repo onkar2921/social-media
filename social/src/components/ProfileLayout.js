@@ -27,12 +27,12 @@ import { getbackgroundfromStorage } from "@/server/user";
 //update user
 import { updateUser } from "@/server/user";
 
-export default function ProfileLayout({children}) {
+export default function ProfileLayout({children,...props}) {
   const { state, userDispatch } = useContext(userContext);
 
-  // const pathname = usePathname();
+  console.log("profile layout props",props)
 
-  // console.log("pathname",pathname)
+ 
 
   const router = useRouter();
 
@@ -59,7 +59,7 @@ export default function ProfileLayout({children}) {
 
   const [background, setBackground] = useState("");
 
-  // console.log("state to get bg", state);
+ 
 
   const getBackground = async () => {
     if (state?.userId) {
@@ -110,6 +110,7 @@ userDispatch({type:"UPDATE_USER",payload:data[0]})
     <>
       <div className="w-full h-full md:min-w-6xl sm:flex  p-2">
         <Layout>
+          
           <div className="w-full h-full flex items-center  flex-col rounded-md">
             <Card>
               <div className="xs:w-full h-full flex  flex-col p-2 relative">

@@ -10,7 +10,9 @@ import { getUserFromDb } from "@/server/user";
 import { createPost } from "@/server/posts";
 import { postContext } from "@/context/PostContextProvider";
 import { getAllPosts } from "@/server/posts";
+import { getLastPostOfUser } from "@/server/posts";
 
+// import { addNotification } from "@/server/notification";
 export default function PostFormCard() {
   const { postDispatch } = useContext(postContext);
 
@@ -55,11 +57,27 @@ export default function PostFormCard() {
     setPhotos(e.target.files);
   };
 
+
+
+  
   const handlePost = async () => {
     try {
-      await createPost(userId, content, photos), setContent("");
+    const data=  await createPost(userId, content, photos)
+    console.log("psot created data",data)
+      setContent("");
       //again set posts to context
       await getWholePosts();
+
+      const lastPostData=await getLastPostOfUser(userId)
+      if(lastPostData){
+        alert("last post got")
+
+        // const data=await addNotification(userId,lastPostData?.id,"new Post Added")
+
+        console.log("last data",lastPostData)
+
+      }
+     
       // alert("hit again")
     } catch (error) {
       console.log(error);
@@ -72,6 +90,7 @@ export default function PostFormCard() {
     <>
       {/* <button onClick={getData}>get id</button> */}
       <div className="w-full h-full p-2 md:flex sm:p-6 flex-col items-start    ">
+        
         <div className="md:w-[80%] h-full flex p-2 mb-2">
           <Image
             src={url}

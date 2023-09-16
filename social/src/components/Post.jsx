@@ -31,14 +31,12 @@ import { addComment } from "@/server/posts";
 import { getAllComment } from "@/server/posts";
 import { removeComment } from "@/server/posts";
 
-
-
 //specific user data
 import { getUser } from "@/server/user";
 
+//notifications
 
-
-
+import { addNotification } from "@/server/notification";
 
 export default function Post(props) {
   const { postDispatch, likeRefresh, allComments } = useContext(postContext);
@@ -84,11 +82,21 @@ export default function Post(props) {
 
   const [likestatus, setLikeStatus] = useState(false);
 
+  const Notify = async () => {
+    alert("hit notify front");
+    const notifyData = await addNotification(userID, props?.id, "liked a post");
+    if (notifyData) {
+      console.log("notfy for liked");
+    }
+  };
+
   const handleLike = async () => {
     const data = await postLike(userID, props?.id);
     // console.log("post like data",data)
     setLikeStatus(true);
     localStorage.setItem("verifyLike", true);
+
+    Notify();
 
     if (data) {
       alert("post is liked");
@@ -208,68 +216,70 @@ export default function Post(props) {
     setShow(!show);
   };
 
+  const [specificUser, setSpecificUser] = useState("");
 
+  //   const currentDate = new Date();
+  //   console.log(currentDate);
 
-  const [specificUser,setSpecificUser]=useState("")
+  // console.log("author check",props?.alldata?.created_at)
 
-//   const currentDate = new Date();
-//   console.log(currentDate);
+  function timeAgo(timestamp) {
+    const currentDate = new Date();
+    const postDate = new Date(timestamp);
+    const timeDifference = currentDate - postDate;
 
-// console.log("author check",props?.alldata?.created_at)
+    const seconds = Math.floor(timeDifference / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    const weeks = Math.floor(days / 7);
 
-function timeAgo(timestamp) {
-  const currentDate = new Date();
-  const postDate = new Date(timestamp);
-  const timeDifference = currentDate - postDate;
-
-  const seconds = Math.floor(timeDifference / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
-  const weeks = Math.floor(days / 7);
-
-  if (weeks >= 1) {
-    return `${weeks} week${weeks > 1 ? 's' : ''} ago`;
-  } else if (days >= 1) {
-    return `${days} day${days > 1 ? 's' : ''} ago`;
-  } else if (hours >= 1) {
-    return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-  } else if (minutes >= 1) {
-    return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-  } else {
-    return `${seconds} second${seconds > 1 ? 's' : ''} ago`;
+    if (weeks >= 1) {
+      return `${weeks} week${weeks > 1 ? "s" : ""} ago`;
+    } else if (days >= 1) {
+      return `${days} day${days > 1 ? "s" : ""} ago`;
+    } else if (hours >= 1) {
+      return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+    } else if (minutes >= 1) {
+      return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
+    } else {
+      return `${seconds} second${seconds > 1 ? "s" : ""} ago`;
+    }
   }
-}
+
+  const fetchUser = async () => {
+    const data = await getUser(props?.alldata?.author);
+    setSpecificUser(data[0]);
+    // console.log("all users data",data[0])
+  };
+
+  const [postTime, setPostTime] = useState(0);
+
+  useEffect(() => {
+    fetchUser();
+
+    const timestamp = props?.alldata?.created_at;
+    const timeAgoString = timeAgo(timestamp);
+    // console.log("Time ago:", timeAgoString);
+    setPostTime(timeAgoString);
+  }, []);
 
 
+  const generatedURLPath = `/profile/${props?.alldata?.author}`;
 
+  const handleLinkClick = () => {
+    const generatedURLPath = `/profile/${props?.alldata?.author}`;
+    console.log("Generated URL Path:", generatedURLPath);
 
-const fetchUser=async()=>{
-
-  const data=await getUser(props?.alldata?.author)
-    setSpecificUser(data[0])
-  // console.log("all users data",data[0])
-
-}
-
-const [postTime,setPostTime]=useState(0)
-
-
-
-
-
-useEffect(()=>{
-  fetchUser()
-
-  const timestamp = props?.alldata?.created_at;
-const timeAgoString = timeAgo(timestamp);
-// console.log("Time ago:", timeAgoString);
-setPostTime(timeAgoString)
-},[])
-
-
-
-
+    // Navigate to the generated URL path
+    console.log("url",generatedURLPath)
+    alert("url",generatedURLPath)
+    // router.push(generatedURLPath);
+    router.push({
+      pathname: generatedURLPath,
+      query: { profileId: props?.alldata?.author } 
+    });
+  };
 
   return (
     <>
@@ -289,10 +299,14 @@ setPostTime(timeAgoString)
           <div className=" w-full h-full flex items-center justify-between  ">
             <div className="w-full h-full">
               <p>
-                <Link href={"/profile"}>
+                {/* <Link href={`/profile/${props?.alldata?.author}`}>
                   <span className="font-bold">{specificUser?.name}</span> shared a
-                </Link>
+                </Link> */}
 
+                <Link href={generatedURLPath} onClick={handleLinkClick}>
+                  <span className="font-bold">{specificUser?.name}</span> shared
+                  a
+                </Link>
                 <span className="font-bold  text-blue-500"> post</span>
               </p>
               <p>{postTime}</p>
