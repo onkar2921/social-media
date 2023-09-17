@@ -342,7 +342,7 @@ export default function Post(props) {
                       />
                       <p
                         className="ml-3 cursor-pointer"
-                        onClick={props.onRemoveBookmark}
+                        onClick={props?.onRemoveBookmark}
                       >
                         Hide Post
                       </p>
@@ -389,7 +389,7 @@ export default function Post(props) {
         ></Image>
          }
 
-          <p>{props.content}</p>
+          <p>{props?.content}</p>
         </div>
         <div className="w-full h-full rounded-md shadow-md p-3 flex items-center mb-4">
           <div className="flex mr-6">

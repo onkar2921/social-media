@@ -46,7 +46,7 @@ export default function Page() {
       setRefresh(true);
       return;
     }
-    
+
     console.log(data.error);
   };
 
@@ -54,7 +54,6 @@ export default function Page() {
     <Layout>
       <div className="w-full h-full flex flex-col">
         <h2 className="w-full text-center p-2 text-4xl shadow-md mt-10">
-          
           Your Saved Posts
         </h2>
 
@@ -63,7 +62,7 @@ export default function Page() {
             return (
               <>
                 <Post
-                  onRemoveBookmark={() => handleRemoveBookmark(item?.id)}
+                  onRemoveBookmark={() => handleRemoveBookmark(item.id)}
                   key={item?.id}
                   id={item?.id}
                   content={item?.content}
