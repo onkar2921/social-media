@@ -98,7 +98,7 @@ export const getbackgroundfromStorage = async (userId) => {
 
     // console.log("getBG=----", getBG.data[0]?.cover);
 
-    const ImageName = getBG.data[0]?.cover;
+    const ImageName = getBG?.data[0]?.cover;
 
     return ImageName;
   } catch (error) {

@@ -242,7 +242,7 @@ export default function Post(props) {
   const fetchUser = async () => {
     const data = await getUserInfo(props?.alldata?.author);
     setSpecificUser(data[0]);
-    // console.log("all users data",data[0])
+    console.log("all users data",data[0])
   };
 
   const [postTime, setPostTime] = useState(0);

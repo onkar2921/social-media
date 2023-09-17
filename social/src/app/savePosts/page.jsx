@@ -62,7 +62,7 @@ export default function Page() {
         <div className="h-full w-full mt-2 flex items-center justify-center flex-col">
           {allBookmarks?.map((item) => {
 
-            console.log("item------------------",item)
+            // console.log("item------------------",item)
             return (
               <>
                 <Post

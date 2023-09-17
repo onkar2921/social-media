@@ -64,7 +64,7 @@ const getUserFromDb = async (user) => {
     if (exist?.data) {
       // console.log("exist data at user context",exist.data)
 
-      userDispatch({ type: "SET_USERID", payload: exist.data[0] });
+      userDispatch({ type: "SET_USERID", payload: exist?.data[0] });
     }
   } catch (error) {
     console.log(error);
