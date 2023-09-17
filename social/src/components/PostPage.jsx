@@ -18,19 +18,9 @@ export default function PostPage(props) {
 
   const { posts, postDispatch, allComments } = useContext(postContext);
 
-  // const {state,userDispatch}=useContext(userContext)
-
-
-
-  // const postorender = profileUser ? userPosts : posts;
-
   const postorender =  props?.posts ?props?.posts : posts;
 
-  //comment
-
-  // const [allComments,setAllComments]=useState([])
-
-
+  
  
 
   const fetchComments = async () => {
@@ -46,7 +36,7 @@ export default function PostPage(props) {
   useEffect(() => {
     fetchComments();
    
-  }, []);
+  }, [posts,props?.posts]);
 
   return (
     <>
