@@ -16,7 +16,8 @@ export default function UserContextProvider({children}){
        userId:"",
        email:"",
        info:[],
-       address:""
+       address:"",
+       profileUser:""
     }
     
     

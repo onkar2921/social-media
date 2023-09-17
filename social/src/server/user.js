@@ -36,7 +36,7 @@ export const getUserFromDb = async (user) => {
     // console.log("user at back email", email);
     const exist = await supabase.from("user").select("*").eq("email", email);
     if (exist?.data) {
-      console.log("exist user", exist.data);
+      // console.log("exist user", exist.data);
     
       return exist.data;
     }
@@ -48,13 +48,13 @@ export const getUserFromDb = async (user) => {
 
 
 
-const getAllstorage=async()=>{
-    // get all storage
+// const getAllstorage=async()=>{
+//     // get all storage
 
-    const { data, error } = await supabase.storage.from('background').list();
-    return data
+//     const { data, error } = await supabase.storage.from('background').list();
+//     return data
 
-}
+// }
 
 export const addProfileBg = async (userId, photo) => {
   try {
@@ -63,7 +63,7 @@ export const addProfileBg = async (userId, photo) => {
 
 
     const image = photo;
-    console.log(image);
+    // console.log(image);
     const imagePath = `public/${image?.name}`;
     const Imagedata = await supabase.storage
       .from("background")
@@ -113,7 +113,7 @@ export const updateUser=async(userId,name,address)=>{
     const {data,error}=await supabase.from("user").update({"name":name,"address":address}).eq("id",userId).select()
 
     if(data){
-    console.log("updated user data",data)
+    // console.log("updated user data",data)
       return data
     }
     
@@ -124,23 +124,10 @@ export const updateUser=async(userId,name,address)=>{
 
 
 
-// export const getUserPhotos=async(userId)=>{
-//   try {
-//         const {data,error}=await supabase.from("posts").select("photos").eq("author",userId)
 
-//         if(data){
-//           return data
-//         }
-//         console.log(error)
-//   } catch (error) {
-//     console.log(error)
-//   }
-// }
-
-
-
-export const getUser=async(userId)=>{
+export const getUserInfo=async(userId)=>{
   try {
+    // alert("hit getuser")
     const {data,error}=await supabase.from("user").select("*").eq("id",userId)
 
     if(data){

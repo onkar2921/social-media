@@ -3,7 +3,8 @@ import Post from "./Post";
 import { useEffect, useState } from "react";
 import { useContext } from "react";
 import { postContext } from "@/context/PostContextProvider";
-
+import { userContext } from "@/context/UserContextProvider";
+import { getUserPosts } from "@/server/posts";
 //comments
 
 import { getAllComment } from "@/server/posts";
@@ -12,9 +13,18 @@ import { getAllComment } from "@/server/posts";
 
 
 export default function PostPage(props) {
+
+
+
   const { posts, postDispatch, allComments } = useContext(postContext);
 
-  const postorender = props.posts ? props.posts : posts;
+  // const {state,userDispatch}=useContext(userContext)
+
+
+
+  // const postorender = profileUser ? userPosts : posts;
+
+  const postorender =  props?.posts ?props?.posts : posts;
 
   //comment
 
@@ -31,7 +41,7 @@ export default function PostPage(props) {
     }
   };
 
-  console.log("comments data", allComments);
+  // console.log("comments data", allComments);
 
   useEffect(() => {
     fetchComments();
@@ -44,10 +54,11 @@ export default function PostPage(props) {
 
         {postorender?.map((item) => (
           <Post
+            avatar={item?.avatar}
             alldata={item}
-            key={item.id}
-            id={item.id}
-            content={item.content}
+            key={item?.id}
+            id={item?.id}
+            content={item?.content}
             photo={item?.photos[0]?.data}
             comments={allComments}
           ></Post>

@@ -8,7 +8,7 @@ import comment from "../data/icons/comment.png";
 import share from "../data/icons/share.png";
 import send from "../data/icons/send.png";
 import deleteIcon from "../data/icons/deleteIcon.png";
-import report from "../data/icons/report.png";
+// import report from "../data/icons/report.png";
 import close from "../data/icons/close.png";
 import bookmark from "../data/icons/bookmark.png";
 import bell from "../data/icons/bell.png";
@@ -32,16 +32,20 @@ import { getAllComment } from "@/server/posts";
 import { removeComment } from "@/server/posts";
 
 //specific user data
-import { getUser } from "@/server/user";
+import { getUserInfo } from "@/server/user";
 
 //notifications
 
 import { addNotification } from "@/server/notification";
 
 export default function Post(props) {
+
+  
   const { postDispatch, likeRefresh, allComments } = useContext(postContext);
 
   const { state } = useContext(userContext);
+
+  // console.log("user-----------------------------------",state)
 
   const [userID, setUserID] = useState("");
 
@@ -83,10 +87,10 @@ export default function Post(props) {
   const [likestatus, setLikeStatus] = useState(false);
 
   const Notify = async () => {
-    alert("hit notify front");
+    // alert("hit notify front");
     const notifyData = await addNotification(userID, props?.id, "liked a post");
     if (notifyData) {
-      console.log("notfy for liked");
+      // console.log("notfy for liked");
     }
   };
 
@@ -153,20 +157,12 @@ export default function Post(props) {
   // const [allComments,setAllComments]=useState([])
   const [commentRefresh, setCommentRefresh] = useState(false);
 
-  // const functionCountComment=()=>{
-  //   const filterComments=allComments?.filter((item)=>item?.post===props?.id)
-
-  //   setCommentCount((value) => {
-  //     let len = filterComments.length;
-  //     return len;
-  //   });
-
-  // }
+ 
   const functionCountComment = () => {
     const filterComments = allComments?.filter(
-      (item) => item?.post === props.id
+      (item) => item?.post === props?.id
     );
-    const len = filterComments.length;
+    const len = filterComments?.length;
     setCommentCount(len);
   };
 
@@ -218,11 +214,7 @@ export default function Post(props) {
 
   const [specificUser, setSpecificUser] = useState("");
 
-  //   const currentDate = new Date();
-  //   console.log(currentDate);
-
-  // console.log("author check",props?.alldata?.created_at)
-
+  
   function timeAgo(timestamp) {
     const currentDate = new Date();
     const postDate = new Date(timestamp);
@@ -248,7 +240,7 @@ export default function Post(props) {
   }
 
   const fetchUser = async () => {
-    const data = await getUser(props?.alldata?.author);
+    const data = await getUserInfo(props?.alldata?.author);
     setSpecificUser(data[0]);
     // console.log("all users data",data[0])
   };
@@ -269,10 +261,10 @@ export default function Post(props) {
 
   const handleLinkClick = () => {
     const generatedURLPath = `/profile/${props?.alldata?.author}`;
-    console.log("Generated URL Path:", generatedURLPath);
+    // console.log("Generated URL Path:", generatedURLPath);
 
     // Navigate to the generated URL path
-    console.log("url",generatedURLPath)
+    // console.log("url",generatedURLPath)
     alert("url",generatedURLPath)
     // router.push(generatedURLPath);
     router.push({
@@ -288,7 +280,7 @@ export default function Post(props) {
           <Link href="/profile">
             <div>
               <Image
-                src={user}
+                src={props?.avatar}
                 height={40}
                 width={50}
                 alt="profile image"
@@ -366,10 +358,10 @@ export default function Post(props) {
                         Delete
                       </p>
                     </div>
-                    <div className="flex p-2">
+                    {/* <div className="flex p-2">
                       <Image src={report} height={10} width={20} alt="report" />
                       <p className="ml-3">Report</p>
-                    </div>
+                    </div> */}
                   </div>
                 )}
               </div>
@@ -387,13 +379,15 @@ export default function Post(props) {
             className="rounded-full shadow-sm mr-6"
           ></Image> */}
 
-          <Image
-            src={imageUrl}
-            height={100}
-            width={400}
-            alt="post image"
-            className="rounded-md mb-2 shadow-sm mr-6 w-full"
-          ></Image>
+         {
+          props?.photo &&  <Image
+          src={imageUrl}
+          height={100}
+          width={400}
+          alt="post image"
+          className="rounded-md mb-2 shadow-sm mr-6 w-full"
+        ></Image>
+         }
 
           <p>{props.content}</p>
         </div>
@@ -449,18 +443,18 @@ export default function Post(props) {
           {show && (
             <>
               {props?.comments?.map((item) => {
-                if (item.post === props.id) {
+                if (item?.post === props?.id) {
                   return (
                     <>
                       <div className="flex w-full items-center m-2 ">
                         <h2 className="text-center flex mr-2 rounded-md p-2 bg-slate-300">
-                          {item.user_name}
+                          {item?.user_name}
                         </h2>
                         <p className="w-1/2 m-2 shadow-lg pl-2">
-                          {item.comment}
+                          {item?.comment}
                         </p>
-                        {userID === item.user && (
-                          <button onClick={() => handleDeleteComment(item.id)}>
+                        {userID === item?.user && (
+                          <button onClick={() => handleDeleteComment(item?.id)}>
                             delete
                           </button>
                         )}
@@ -475,11 +469,11 @@ export default function Post(props) {
 
         <div className="flex w-fll h-full">
           <Image
-            src={user}
+            src={state?.avatar}
             height={40}
             width={50}
             alt="profile image"
-            className="rounded-full shadow-sm mr-6"
+            className="rounded-full shadow-sm mr-6 ml-2"
           ></Image>
           <div className="flex items-center w-full p-2">
             <input

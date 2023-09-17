@@ -42,7 +42,7 @@ useEffect(()=>{
     const data=await getUsers()
 
     if(data){
-        alert("getting all users")
+        // alert("getting all users")
         setAllusers(data)
        
     }
@@ -58,7 +58,7 @@ useEffect(()=>{
 
 
 
-console.log("all users",allusers)
+// console.log("all users",allusers)
 
 useEffect(()=>{
   // console.log("state---",state)

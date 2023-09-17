@@ -3,7 +3,7 @@ import { supabase } from "@/lib/supabase/initSupabase";
 export const addNotification=async(userId,postId,notification)=>{
     try {
 
-        alert("hit notify back")
+        // alert("hit notify back")
         const {data,error}=await supabase.from("notifications").insert({"user":userId,"post":postId,"notify":notification}).select("*")
         if(data){
             return data
@@ -16,26 +16,9 @@ export const addNotification=async(userId,postId,notification)=>{
 }
 
 
-export const getAllNotifications=async()=>{
+export const getAllNotifications=async(userId)=>{
     try {
-        // const {data:notificationData,error}=await supabase.from("notifications").select("*")
-        // // console.log("back notification data",notificationData[0].user)
-        
-        // const userId = notificationData[0]?.user; 
-
        
-        //     const {data:allData}=await supabase.from("user").select("name").eq("id",userId)
-
-
-        //     notificationData.user_name=allData[0]?.name
-
-        //     DataSend={
-        //         id:notificationData.id,
-        //         user_name:allData[0]?.name,
-        //         notify:notificationData?.notify,
-        //         avatar:allData.avatar
-
-        //     }
 
 
         const { data: notificationData, error } = await supabase
@@ -46,7 +29,7 @@ export const getAllNotifications=async()=>{
 const processedNotifications = [];
 
 for (const notification of notificationData) {
-  const userId = notification.user;
+  const userId = notification?.user;
 
   const { data: allData } = await supabase
     .from("user")
@@ -54,16 +37,30 @@ for (const notification of notificationData) {
     .eq("id", userId);
 
   const notificationItem = {
-    id: notification.id,
+    id: notification?.id,
+    userId:notification?.user,
+    postId:notification?.post,
     user_name: allData[0]?.name,
-    notify: notification.notify,
+    notify: notification?.notify,
     avatar: `https://adefwkbyuwntzginghtp.supabase.co/storage/v1/object/public/photos/${allData[0]?.avatar}`  
   };
 
-  processedNotifications.push(notificationItem);
+//   console.log("nottification item post id",notificationItem?.postId)
+
+
+  const {data:checkpostData}=await supabase.from("posts").select("*").eq("id",notificationItem?.postId)
+
+  if(checkpostData){
+
+      processedNotifications.push(notificationItem);
+  }
+
 
 
 }
+
+
+
 
 return processedNotifications
 

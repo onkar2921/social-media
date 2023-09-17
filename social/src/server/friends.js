@@ -19,7 +19,7 @@ export const getUsers=async()=>{
 
 export const getFriends=async(userId)=>{
     try {
-            alert(userId)
+            // alert(userId)
 
             // const userID = userId.toString();
             const { data, error } = await supabase
@@ -27,7 +27,7 @@ export const getFriends=async(userId)=>{
             .select("*")
             .eq("friend", userId);
         if(data){
-            console.log("data of friends",data)
+            // console.log("data of friends",data)
             return data
         }
 
@@ -95,9 +95,9 @@ export const getMutualFriends=async(userId,friendId)=>{
         
 if (userData && friendData) {
     
-    const newData = userData.filter((item) => {
+    const newData = userData?.filter((item) => {
     //   console.log("item",item)
-      const shouldInclude = friendData.some((fitem) => {
+      const shouldInclude = friendData?.some((fitem) => {
         // console.log("f----item",fitem)
         // if(item?.owner===userId && fitem?.owner===friendId){
 
@@ -107,7 +107,7 @@ if (userData && friendData) {
       return shouldInclude;
     });
   
-    console.log("new data", newData);
+    // console.log("new data", newData);
     
 
             return newData

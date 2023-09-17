@@ -1,8 +1,9 @@
 import Image from "next/image";
 // import user from "../data/icons/user.png";
-import profile from "../data/icons/profile.png";
-import smile from "../data/icons/smile.png";
-import checkin from "../data/icons/checkin.png";
+// import profile from "../data/icons/profile.png";
+// import smile from "../data/icons/smile.png";
+// import checkin from "../data/icons/checkin.png";
+import Photos from "../data/icons/photos.png";
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useContext } from "react";
 import { getUserData } from "@/app/helpers/authhelper";
@@ -11,14 +12,15 @@ import { createPost } from "@/server/posts";
 import { postContext } from "@/context/PostContextProvider";
 import { getAllPosts } from "@/server/posts";
 import { getLastPostOfUser } from "@/server/posts";
+import { userContext } from "@/context/UserContextProvider";
 
 // import { addNotification } from "@/server/notification";
 export default function PostFormCard() {
   const { postDispatch } = useContext(postContext);
-
+  const {state}=useContext(userContext)
   const getWholePosts = async () => {
     try {
-      const data = await getAllPosts();
+      const data = await getAllPosts(state?.userId);
       if (data) {
         postDispatch({ type: "SET_POSTS", payload: data });
       }
@@ -62,19 +64,23 @@ export default function PostFormCard() {
   
   const handlePost = async () => {
     try {
-    const data=  await createPost(userId, content, photos)
-    console.log("psot created data",data)
+      if(photos.length>0 || content.length>0){
+
+        const data=  await createPost(userId, content, photos)
+      }
+
       setContent("");
+    // console.log("psot created data",data)
       //again set posts to context
       await getWholePosts();
 
       const lastPostData=await getLastPostOfUser(userId)
       if(lastPostData){
-        alert("last post got")
+        // alert("last post got")
 
         // const data=await addNotification(userId,lastPostData?.id,"new Post Added")
 
-        console.log("last data",lastPostData)
+        // console.log("last data",lastPostData)
 
       }
      
@@ -115,7 +121,7 @@ export default function PostFormCard() {
             <div className="flex items-center ">
               <label className="flex items-center">
                 <Image
-                  src={photos}
+                  src={Photos}
                   height={20}
                   width={20}
                   alt="photos image"
@@ -130,7 +136,7 @@ export default function PostFormCard() {
                 <p className="mr-1">Photos</p>
               </label>
             </div>
-            <div className="flex items-center ">
+            {/* <div className="flex items-center ">
               <Image
                 src={profile}
                 height={20}
@@ -159,9 +165,9 @@ export default function PostFormCard() {
                 className="rounded-full shadow-sm xs:mr-1 md:m-2 "
               ></Image>
               <p className=" xs:mr-2 md:mr-10">Mood</p>
-            </div>
+            </div> */}
             <button
-              className="bg-blue-500 shadow-xl rounded-md px-3 text-white"
+              className="bg-blue-500 shadow-xl rounded-md px-3 ml-6 text-white"
               onClick={handlePost}
             >
               Share

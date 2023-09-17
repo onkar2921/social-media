@@ -44,7 +44,7 @@ export const getLastPostOfUser=async(userId)=>{
     const lastInsertedData = data[0]; // Get the first (and only) record
   
     if (lastInsertedData) {
-      console.log("Last inserted data:", lastInsertedData);
+      // console.log("Last inserted data:", lastInsertedData);
       return lastInsertedData
     } else {
       console.log("No data found.");
@@ -56,19 +56,115 @@ export const getLastPostOfUser=async(userId)=>{
   }
 }
 
-export const getAllPosts = async () => {
+// export const getAllPosts = async () => {
+//   try {
+//     const { data, error } = await supabase.from("posts").select("*");
+
+
+// const allData=[]
+  
+//     data?.map(async(item)=>{
+//       const {data:getFriends}=await supabase.from("friends").select("*").eq("friends",item.author)
+
+//       if(getFriends){
+//         allData.push(item)
+//       }
+
+//     })
+
+
+
+
+//     if (allData) {
+//       // console.log("data for bk all users posts",data)
+//       return allData;
+//     }
+//     console.log(error);
+//     return;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
+
+export const getAllPosts = async (userId) => {
   try {
-    const { data, error } = await supabase.from("posts").select("*");
-    if (data) {
-      // console.log("data for bk all users posts",data)
-      return data;
+
+//     const { data: getFriends } = await supabase
+//     .from("friends")
+//     .select("*")
+//     .eq("owner", userId);
+  
+//   const allData = [];
+  
+//   for (const item of getFriends) {
+//     console.log("items------------", item);
+  
+//     const { data, error } = await supabase
+//       .from("posts")
+//       .select("*")
+//       .eq("author", item.friends)
+//       .order("created_at", { ascending: false });
+      
+//       const {data:userData}=await supabase.from("users").select("avatar").eq("id",data.author)
+// console.log("userData------",userData)
+  
+//     if (data) {
+//       let userPhoto=userData
+//       allData.push(...data,userPhoto); 
+//     }
+//   }
+  
+//   if (allData) {
+//     console.log("all data", allData);
+//     return allData;
+//   }
+  
+
+const { data: getFriends } = await supabase
+  .from("friends")
+  .select("*")
+  .eq("owner", userId);
+
+const allData = [];
+
+for (const item of getFriends) {
+  // console.log("items------------", item);
+
+  const { data: postData, error: postError } = await supabase
+    .from("posts")
+    .select("*")
+    .eq("author", item.friends)
+    .order("created_at", { ascending: false });
+
+  if (postData) {
+    for (const post of postData) {
+
+      // console.log("posttt--------------",post)
+      const { data: userData, error: userError } = await supabase
+        .from("user")
+        .select("avatar")
+        .eq("id", post.author);
+
+      if (userData) {
+        const userWithAvatar = { ...post, avatar: userData[0]?.avatar };
+        allData.push(userWithAvatar);
+      }
     }
+  }
+}
+
+if (allData) {
+  // console.log("all data", allData);
+  return allData;
+}
+
     console.log(error);
-    return;
+    return null; 
   } catch (error) {
     console.log(error);
   }
 };
+
 
 export const getImagesfromStorage = async (imageName) => {
   try {
@@ -96,8 +192,25 @@ export const getUserPosts = async (userId) => {
       .select("*")
       .eq("author", userId);
 
-    if (data) {
-      return data;
+const allData=[]
+      if (data) {
+        for (const post of data) {
+    
+          // console.log("posttt--------------",post)
+          const { data: userData, error: userError } = await supabase
+            .from("user")
+            .select("avatar")
+            .eq("id", post.author);
+    
+          if (userData) {
+            const userWithAvatar = { ...post, avatar: userData[0]?.avatar };
+            allData.push(userWithAvatar);
+          }
+        }
+      }
+
+    if (allData) {
+      return allData;
     }
 
     console.log(error);
@@ -121,33 +234,10 @@ export const addBookmark = async (userId, postId) => {
   }
 };
 
-// export const getBookmark=async(userId)=>{
-//   try {
 
-//     const {data,error}=await supabase.from("Bookmark").select("*").eq("user",userId)
-
-//     if(data){
-//    const postIds = data?.map((bookmark) => bookmark.post);
-//   const { data: postsData, error: postsError } = await supabase
-//   .from("posts")
-//   .select("*")
-//   .in("id", postIds);
-
-//  }
-
-//  if(postsData){
-//   return postsData
-//  }
-
-//     console.log(error)
-
-//   } catch (error) {
-//     console.log(error)
-//   }
-// }
 
 export const getBookmark = async (userId) => {
-  console.log("user id for bookmark", userId);
+  // console.log("user id for bookmark", userId);
   try {
     const { data: bookmarkData, error: bookmarkError } = await supabase
       .from("Bookmark")
@@ -160,7 +250,7 @@ export const getBookmark = async (userId) => {
     }
 
     if (bookmarkData) {
-      const postIds = bookmarkData.map((bookmark) => bookmark.post);
+      const postIds = bookmarkData.map((bookmark) => bookmark?.post);
       const { data: postsData, error: postsError } = await supabase
         .from("posts")
         .select("*")
@@ -187,7 +277,7 @@ export const removeBookmark = async (postId) => {
 
     if (data) {
       alert("removed");
-      console.log("data after removed", data);
+      // console.log("data after removed", data);
       return data;
     }
   } catch (error) {
@@ -205,7 +295,7 @@ export const deletePostFromTbale = async (postId, userId) => {
 
     alert("post deletd");
     return data;
-    console.log(error);
+    
   } catch (error) {
     console.log(error);
   }
@@ -219,7 +309,7 @@ export const postLike = async (userId, postId) => {
       .eq("user", userId)
       .eq("post", postId);
 
-    console.log("existData", existData.data.length);
+    // console.log("existData", existData.data.length);
 
     if (existData.data.length < 1) {
       const { data, error } = await supabase
@@ -230,7 +320,7 @@ export const postLike = async (userId, postId) => {
       if (data) {
         return data;
       } else {
-        console.log("alredy liked");
+        // console.log("alredy liked");
         return 1;
       }
       console.log(error);
@@ -269,7 +359,7 @@ export const dislikePost = async (userId, postId) => {
       .eq("user", userId)
       .eq("post", postId)
       .select("*");
-    console.log("dislike post data", data);
+    // console.log("dislike post data", data);
     if (data) {
       return data;
     }
@@ -295,7 +385,7 @@ export const addComment = async (userId, postId, text) => {
         user: userId,
         post: postId,
         comment: text,
-        user_name: userData[0].name,
+        user_name: userData[0]?.name,
       });
 
     if (data) {
@@ -327,37 +417,6 @@ export const getAllComment = async () => {
   try {
     const { data, error } = await supabase.from("comments").select("*");
 
-    // const { data: comments, error: commentsError } = await supabase
-    // .from('comments')
-    // .select('*');
-
-    // // Next, fetch user names for the comments
-    // if (!commentsError && comments) {
-    // for (const comment of comments) {
-    //   const { data: userData, error: userError } = await supabase
-    //     .from('user')
-    //     .select('name')
-    //     .eq('id', comment.user)
-    //     .single();
-
-    //   if (!userError && userData) {
-    //     comment.user = userData.name;
-    //   }
-    // }
-    // }
-
-    // console.log(comments);
-
-    // const { data, error } = await supabase
-    //   .from('comments')
-    //   .select(
-    //     '*, { user: (from(user).select(name).eq(id, user).single()) }'
-    //   );
-
-    console.log(data);
-
-    console.log(data);
-
     if (data) {
       return data;
     }
@@ -366,3 +425,5 @@ export const getAllComment = async () => {
     console.log(error);
   }
 };
+
+

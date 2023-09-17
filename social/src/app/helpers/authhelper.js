@@ -59,7 +59,7 @@ export const handelLogout = async () => {
     try {
       
      
-    // console.log("Logging out...");
+    
       const { error } = await supabase.auth.signOut();
       if (error) {
         console.error("Error during logout:", error);

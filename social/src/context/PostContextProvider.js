@@ -26,13 +26,13 @@ export default function PostContextProvider({ children }) {
 
     const user_id = await getUserFromDb(user);
     if (user_id && user_id.length > 0) {
-      setUserId(user_id[0].id);
+      setUserId(user_id[0]?.id);
     }
   };
 
   const getPosts = async () => {
     if (userId) {
-      console.log("setting post to all user posts");
+      // console.log("setting post to all user posts");
       const data = await getAllPosts(userId);
       if (data) {
         postDispatch({ type: "SET_POSTS", payload: data });
@@ -50,7 +50,7 @@ export default function PostContextProvider({ children }) {
     }
   }, [userId, initialPosts.refresh]);
 
-  console.log("post context allposts", state?.posts);
+  // console.log("post context allposts", state?.posts);
 
   return (
     <postContext.Provider value={{ ...state, postDispatch }}>

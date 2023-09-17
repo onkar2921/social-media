@@ -22,7 +22,7 @@ export const userReducer=(state,action)=>{
      
 
             case "UPDATE_USER":
-                console.log("payload for updated",action.payload)
+                // console.log("payload for updated",action.payload)
                 
                 return{
                     ...state,
@@ -30,6 +30,12 @@ export const userReducer=(state,action)=>{
                     address:action.payload?.address,
                     name:action.payload?.name
 
+                }
+
+            case "SETPROFILEUSER":
+                return{
+                    ...state,
+                    profileUser:action.payload
                 }
     default :
     return state

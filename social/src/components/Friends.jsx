@@ -3,24 +3,27 @@ import React from 'react'
 import Card from './Card'
 import Image from 'next/image'
 
-import { useEffect,useState } from 'react';
+import { useEffect,useState ,useContext} from 'react';
 import { addFriend } from '@/server/friends';
 import { getRelatedFriends } from '@/server/friends';
 import { removeFriend } from '@/server/friends';
 import { getMutualFriends } from '@/server/friends';
-
-
+import { getAllPosts } from '@/server/posts';
+import { userContext } from '@/context/UserContextProvider';
+import { postContext } from "@/context/PostContextProvider"
 export default function Friends(props) {
 
 
   // console.log("friends props",props?.userId,props.friendId)
+  const {state}=useContext(userContext)
   
   const handleFriend=async()=>{
-      const data=await addFriend(props?.userId,props.friendId)
+      const data=await addFriend(props?.userId,props?.friendId)
 
       if(data){
         alert("friend added")
         setChange(true)
+        getPosts()
       }
 
   }
@@ -46,7 +49,7 @@ export default function Friends(props) {
 
   const [mutual,setMutual]=useState([])
   const MutualFriends=async()=>{
-    const data=await getMutualFriends(props?.userId,props.friendId)
+    const data=await getMutualFriends(props?.userId,props?.friendId)
     if(data){
       setMutual(data)
     }
@@ -61,9 +64,27 @@ export default function Friends(props) {
 const len=mutual?.length
 
 
+const {postDispatch}=useContext(postContext)
+
+
+
+const getPosts = async () => {
+  if (state?.userId) {
+    // console.log("setting post to all user posts");
+    const data = await getAllPosts(state?.userId);
+    if (data) {
+      postDispatch({ type: "SET_POSTS", payload: data });
+    }
+  }
+};
+
+
+
+
   const handleFriendRemove=async()=>{
-    const data=await removeFriend(props?.userId,props.friendId)
+    const data=await removeFriend(props?.userId,props?.friendId)
     if(data){
+      getPosts()
       setChange(false)
     }
   }
