@@ -50,20 +50,22 @@ export default function PostPage(props) {
 
   return (
     <>
-      <div className="w-full h-full p-2 ">
 
-        {postorender?.map((item) => (
-          <Post
-            avatar={item?.avatar}
-            alldata={item}
-            key={item?.id}
-            id={item?.id}
-            content={item?.content}
-            photo={item?.photos[0]?.data}
-            comments={allComments}
-          ></Post>
-        ))}
-      </div>
+<div className="w-full h-full p-2 ">
+  {postorender?.map((item) => (
+    <Post
+      avatar={item?.avatar}
+      alldata={item}
+      key={item?.id}
+      id={item?.id}
+      content={item?.content}
+      photo={item?.photos && item?.photos[0]?.data}
+      comments={allComments}
+    ></Post>
+  ))}
+</div>
+
+    
     </>
   );
 }
