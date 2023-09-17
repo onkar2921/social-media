@@ -14,7 +14,7 @@ import { getAllComment } from "@/server/posts";
 
 export default function PostPage(props) {
 
-
+// console.log("not")
 
   const { posts, postDispatch, allComments } = useContext(postContext);
 
