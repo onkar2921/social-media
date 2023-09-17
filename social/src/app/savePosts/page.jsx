@@ -29,7 +29,7 @@ export default function Page() {
       if (userID) {
         const data = await getBookmark(userID);
         if (data) {
-          // console.log("all bookmarks", data);
+          console.log("all bookmarks", data);
           setAllBookmarks(data);
         }
       }
@@ -51,6 +51,8 @@ export default function Page() {
   };
 
   return (
+
+
     <Layout>
       <div className="w-full h-full flex flex-col">
         <h2 className="w-full text-center p-2 text-4xl shadow-md mt-10">
@@ -59,14 +61,20 @@ export default function Page() {
 
         <div className="h-full w-full mt-2 flex items-center justify-center flex-col">
           {allBookmarks?.map((item) => {
+
+            console.log("item------------------",item)
             return (
               <>
                 <Post
+
                   onRemoveBookmark={() => handleRemoveBookmark(item.id)}
+                  avatar={item?.avatar}
                   key={item?.id}
                   id={item?.id}
                   content={item?.content}
+                  alldata={item}
                   photo={item?.photos && item?.photos[0]?.data}
+
                 ></Post>
               </>
             );

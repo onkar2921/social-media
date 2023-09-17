@@ -37,9 +37,14 @@ useEffect(() => {
         const data = await getUserPosts(params?.userId);
   
         if (data) {
-          // console.log("user related posts", data);
-          const photoPaths = data?.map((item) => {
-            return item?.photos[0]?.data?.path;
+        
+          const photowithimage = data?.filter((item) => item?.photos?.length > 0);
+
+          const photoPaths = photowithimage?.map((item) => {
+            
+            if (item?.photos && item?.photos?.length > 0) {
+              return item?.photos[0]?.data?.path;
+            }
           });
           setUserPhotos(photoPaths);
         }
@@ -49,8 +54,7 @@ useEffect(() => {
     getUserAllPosts();
   }, [params]);
   
-  // console.log("userPhotos", userPhotos);
-  
+ 
 
   
  

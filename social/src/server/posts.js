@@ -256,14 +256,35 @@ export const getBookmark = async (userId) => {
         .select("*")
         .in("id", postIds);
 
-      if (postsError) {
-        console.error("Error fetching posts:", postsError);
-        return null;
+
+
+        const allData=[]
+      if (postsData) {
+        for (const post of postsData) {
+    
+          // console.log("posttt--------------",post)
+          const { data: userData, error: userError } = await supabase
+            .from("user")
+            .select("*")
+            .eq("id", post.author);
+            // console.log("userData",userData)
+    
+          if (userData) {
+            const userWithAvatar = { ...post, avatar: userData[0]?.avatar,name:userData[0]?.name,created_at:userData[0]?.created_at };
+            allData.push(userWithAvatar);
+          }
+        }
       }
 
-      if (postsData) {
-        return postsData;
-      }
+    if (allData) {
+      return allData;
+    }
+
+    
+
+      // if (postsData) {
+      //   return postsData;
+      // }
     }
   } catch (error) {
     console.error("Error:", error);
