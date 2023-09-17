@@ -64,10 +64,10 @@ export default function PostFormCard() {
   
   const handlePost = async () => {
     try {
-      if(photos.length>0 || content.length>0){
+      // if(photos.length>0 || content.length>0){
 
-        const data=  await createPost(userId, content, photos)
-      }
+      // }
+      const data=  await createPost(userId, content, photos)
 
       setContent("");
     // console.log("psot created data",data)
@@ -131,6 +131,7 @@ export default function PostFormCard() {
                   type="file"
                   onChange={handlePhoto}
                   multiple
+                  required
                   className="hidden"
                 />
                 <p className="mr-1">Photos</p>

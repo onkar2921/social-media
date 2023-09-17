@@ -89,36 +89,6 @@ export const getLastPostOfUser=async(userId)=>{
 export const getAllPosts = async (userId) => {
   try {
 
-//     const { data: getFriends } = await supabase
-//     .from("friends")
-//     .select("*")
-//     .eq("owner", userId);
-  
-//   const allData = [];
-  
-//   for (const item of getFriends) {
-//     console.log("items------------", item);
-  
-//     const { data, error } = await supabase
-//       .from("posts")
-//       .select("*")
-//       .eq("author", item.friends)
-//       .order("created_at", { ascending: false });
-      
-//       const {data:userData}=await supabase.from("users").select("avatar").eq("id",data.author)
-// console.log("userData------",userData)
-  
-//     if (data) {
-//       let userPhoto=userData
-//       allData.push(...data,userPhoto); 
-//     }
-//   }
-  
-//   if (allData) {
-//     console.log("all data", allData);
-//     return allData;
-//   }
-  
 
 const { data: getFriends } = await supabase
   .from("friends")
@@ -157,6 +127,33 @@ if (allData) {
   // console.log("all data", allData);
   return allData;
 }
+
+// const { data: getFriends, error: friendsError } = await supabase
+//   .from("friends")
+//   .select("*")
+//   .eq("owner", userId);
+
+// const allData = [];
+
+// if (getFriends) {
+//   const friendIds = getFriends.map((friend) => friend.friends);
+
+//   const { data: postData, error: postError } = await supabase
+//     .from("posts")
+//     .select("posts.*, users.avatar")
+//     .in("author", friendIds)
+//     .order("posts.created_at", { ascending: false })
+//     .left("users", { foreignKey: "author" });
+
+//   if (postData) {
+//     allData.push(...postData);
+//   }
+// }
+
+// if (allData) {
+//   // console.log("all data", allData);
+//   return allData;
+// }
 
     console.log(error);
     return null; 
