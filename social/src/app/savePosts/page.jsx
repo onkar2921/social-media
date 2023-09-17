@@ -63,11 +63,11 @@ export default function Page() {
             return (
               <>
                 <Post
-                  onRemoveBookmark={() => handleRemoveBookmark(item.id)}
+                  onRemoveBookmark={() => handleRemoveBookmark(item?.id)}
                   key={item?.id}
                   id={item?.id}
                   content={item?.content}
-                  photo={item?.photos[0]?.data}
+                  photo={item?.photos && item?.photos[0]?.data}
                 ></Post>
               </>
             );
