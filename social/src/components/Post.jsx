@@ -68,10 +68,11 @@ export default function Post(props) {
       "liked a post"
     );
   };
-
+  let POSTID=props?.alldata?.posts?.id?props?.alldata?.posts?.id:props?.alldata?.id
+  console.log("props.id--------", POSTID);
   const handleLike = async () => {
-    console.log("props.id--------", props?.alldata?.posts?.id);
-    const data = await postLike(state?.userId, props?.alldata?.posts?.id);
+   
+    const data = await postLike(state?.userId, POSTID);
 
     setLikeStatus(true);
     likeCount();
@@ -86,7 +87,7 @@ export default function Post(props) {
 
   const handleDislkie = async () => {
     try {
-      const data = await dislikePost(state?.userId, props?.alldata?.posts?.id);
+      const data = await dislikePost(state?.userId,POSTID);
       if (data) {
         alert("post is disliked");
         likeCount();
@@ -110,7 +111,7 @@ export default function Post(props) {
   const [count, setCount] = useState(0);
 
   const likeCount = async () => {
-    const data = await getLikeCount(props?.alldata?.posts?.id);
+    const data = await getLikeCount(POSTID);
 
     if (data) {
       setCount(data);
