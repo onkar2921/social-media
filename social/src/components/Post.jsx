@@ -123,6 +123,7 @@ export default function Post(props) {
       likeCount();
       setLikeStatus(!likestatus);
     }
+    likeCount();
   }, []);
 
   const functionCountComment = () => {
