@@ -8,15 +8,13 @@ export const setUserToDatabase = async (user) => {
       ?.from("user")
       .select("*")
       .eq("email", email);
-    // console.log("exist--------", exist, "len of data", exist?.data?.length);
-
+    // console.log("exist-------", exist, "len of data", exist?.data?.length);
     if (exist?.data?.length < 1) {
       const { data, error } = await supabase.from("user").insert({
         name,
         email,
         avatar: avatar_url,
       });
-
       if (data) {
         alert("user insetred after signIn");
         // console.log("data ", data);
@@ -46,15 +44,6 @@ export const getUserFromDb = async (user) => {
   }
 };
 
-
-
-// const getAllstorage=async()=>{
-//     // get all storage
-
-//     const { data, error } = await supabase.storage.from('background').list();
-//     return data
-
-// }
 
 export const addProfileBg = async (userId, photo) => {
   try {

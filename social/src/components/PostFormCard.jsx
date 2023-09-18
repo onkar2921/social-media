@@ -1,8 +1,4 @@
 import Image from "next/image";
-// import user from "../data/icons/user.png";
-// import profile from "../data/icons/profile.png";
-// import smile from "../data/icons/smile.png";
-// import checkin from "../data/icons/checkin.png";
 import Photos from "../data/icons/photos.png";
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useContext } from "react";
@@ -14,8 +10,9 @@ import { getAllPosts } from "@/server/posts";
 import { getLastPostOfUser } from "@/server/posts";
 import { userContext } from "@/context/UserContextProvider";
 
-// import { addNotification } from "@/server/notification";
 export default function PostFormCard() {
+
+
   const { postDispatch } = useContext(postContext);
   const {state}=useContext(userContext)
   const getWholePosts = async () => {
@@ -64,27 +61,15 @@ export default function PostFormCard() {
   
   const handlePost = async () => {
     try {
-      // if(photos.length>0 || content.length>0){
-
-      // }
+     
       const data=  await createPost(userId, content, photos)
 
       setContent("");
-    // console.log("psot created data",data)
-      //again set posts to context
+    
       await getWholePosts();
 
       const lastPostData=await getLastPostOfUser(userId)
-      if(lastPostData){
-        // alert("last post got")
-
-        // const data=await addNotification(userId,lastPostData?.id,"new Post Added")
-
-        // console.log("last data",lastPostData)
-
-      }
      
-      // alert("hit again")
     } catch (error) {
       console.log(error);
     }

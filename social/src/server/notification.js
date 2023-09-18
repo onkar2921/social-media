@@ -23,46 +23,14 @@ export const getAllNotifications=async(userId)=>{
 
         const { data: notificationData, error } = await supabase
   .from("notifications")
-  .select("*");
+  .select(`*,user(*),posts(*)`);
 
 
-const processedNotifications = [];
-
-for (const notification of notificationData) {
-  const userId = notification?.user;
-
-  const { data: allData } = await supabase
-    .from("user")
-    .select("name, avatar")
-    .eq("id", userId);
-
-  const notificationItem = {
-    id: notification?.id,
-    userId:notification?.user,
-    postId:notification?.post,
-    user_name: allData[0]?.name,
-    notify: notification?.notify,
-    avatar: `https://adefwkbyuwntzginghtp.supabase.co/storage/v1/object/public/photos/${allData[0]?.avatar}`  
-  };
-
-//   console.log("nottification item post id",notificationItem?.postId)
-
-
-  const {data:checkpostData}=await supabase.from("posts").select("*").eq("id",notificationItem?.postId)
-
-  if(checkpostData){
-
-      processedNotifications.push(notificationItem);
+//   console.log("notification info",notificationData)
+  if(notificationData){
+    return notificationData
   }
 
-
-
-}
-
-
-
-
-return processedNotifications
 
 
     } catch (error) {

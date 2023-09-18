@@ -56,104 +56,18 @@ export const getLastPostOfUser=async(userId)=>{
   }
 }
 
-// export const getAllPosts = async () => {
-//   try {
-//     const { data, error } = await supabase.from("posts").select("*");
 
-
-// const allData=[]
-  
-//     data?.map(async(item)=>{
-//       const {data:getFriends}=await supabase.from("friends").select("*").eq("friends",item.author)
-
-//       if(getFriends){
-//         allData.push(item)
-//       }
-
-//     })
-
-
-
-
-//     if (allData) {
-//       // console.log("data for bk all users posts",data)
-//       return allData;
-//     }
-//     console.log(error);
-//     return;
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
 
 export const getAllPosts = async (userId) => {
   try {
 
-
-const { data: getFriends } = await supabase
-  .from("friends")
-  .select("*")
-  .eq("owner", userId);
-
-const allData = [];
-
-for (const item of getFriends) {
-  // console.log("items------------", item);
-
-  const { data: postData, error: postError } = await supabase
+  const { data: perfectPostData, error: perfectPostError } = await supabase
     .from("posts")
-    .select("*")
-    .eq("author", item.friends)
-    .order("created_at", { ascending: false });
+    .select(`*, user(*)`)
 
-  if (postData) {
-    for (const post of postData) {
-
-      // console.log("posttt--------------",post)
-      const { data: userData, error: userError } = await supabase
-        .from("user")
-        .select("avatar")
-        .eq("id", post.author);
-
-      if (userData) {
-        const userWithAvatar = { ...post, avatar: userData[0]?.avatar };
-        allData.push(userWithAvatar);
-      }
-    }
+  if(perfectPostData){
+    return perfectPostData
   }
-}
-
-if (allData) {
-  // console.log("all data", allData);
-  return allData;
-}
-
-// const { data: getFriends, error: friendsError } = await supabase
-//   .from("friends")
-//   .select("*")
-//   .eq("owner", userId);
-
-// const allData = [];
-
-// if (getFriends) {
-//   const friendIds = getFriends.map((friend) => friend.friends);
-
-//   const { data: postData, error: postError } = await supabase
-//     .from("posts")
-//     .select("posts.*, users.avatar")
-//     .in("author", friendIds)
-//     .order("posts.created_at", { ascending: false })
-//     .left("users", { foreignKey: "author" });
-
-//   if (postData) {
-//     allData.push(...postData);
-//   }
-// }
-
-// if (allData) {
-//   // console.log("all data", allData);
-//   return allData;
-// }
 
     console.log(error);
     return null; 
@@ -182,33 +96,19 @@ export const getImagesfromStorage = async (imageName) => {
 };
 
 export const getUserPosts = async (userId) => {
-  try {
-    // alert("getting")
-    const { data, error } = await supabase
-      .from("posts")
-      .select("*")
-      .eq("author", userId);
+  try {  
 
-const allData=[]
-      if (data) {
-        for (const post of data) {
-    
-          // console.log("posttt--------------",post)
-          const { data: userData, error: userError } = await supabase
-            .from("user")
-            .select("avatar")
-            .eq("id", post.author);
-    
-          if (userData) {
-            const userWithAvatar = { ...post, avatar: userData[0]?.avatar };
-            allData.push(userWithAvatar);
-          }
-        }
-      }
+  const { data: perfectPostData, error: perfectPostError } = await supabase
+    .from("posts")
+    .select(`*, user(*)`)
+    .eq("author", userId);
 
-    if (allData) {
-      return allData;
-    }
+    // console.log("user posts -------",perfectPostData)
+  
+  if(perfectPostData){
+    return perfectPostData
+  }
+  
 
     console.log(error);
   } catch (error) {
@@ -218,11 +118,18 @@ const allData=[]
 
 export const addBookmark = async (userId, postId) => {
   try {
+    const {data:postData}=await supabase.from("posts").select(`*,user(*)`).eq("id",postId)
+
+    // console.log("postDAta0------------------",postData)
     const { data, error } = await supabase
       .from("Bookmark")
-      .insert({ user: userId, post: postId })
+      .insert({ user: userId, post: postId
+        ,user_name:postData[0]?.user?.name,
+            avatar:postData[0]?.user?.avatar
+       })
       .select("*");
     if (data) {
+      // console.log("data---------",data)
       return data;
     }
     console.log(error);
@@ -234,64 +141,28 @@ export const addBookmark = async (userId, postId) => {
 
 
 export const getBookmark = async (userId) => {
-  // console.log("user id for bookmark", userId);
+
   try {
-    const { data: bookmarkData, error: bookmarkError } = await supabase
-      .from("Bookmark")
-      .select("*")
-      .eq("user", userId);
-
-    if (bookmarkError) {
-      console.error("Error fetching bookmarks:", bookmarkError);
-      return null;
-    }
-
-    if (bookmarkData) {
-      const postIds = bookmarkData.map((bookmark) => bookmark?.post);
-      const { data: postsData, error: postsError } = await supabase
-        .from("posts")
-        .select("*")
-        .in("id", postIds);
-
-
-
-        const allData=[]
-      if (postsData) {
-        for (const post of postsData) {
+    const { data: getBookMark, error } = await supabase
+    .from("Bookmark")
+    .select(`*, user(*), posts(*)`) // Use "is" or "not" instead of "eq"
     
-          // console.log("posttt--------------",post)
-          const { data: userData, error: userError } = await supabase
-            .from("user")
-            .select("*")
-            .eq("id", post.author);
-            // console.log("userData",userData)
-    
-          if (userData) {
-            const userWithAvatar = { ...post, avatar: userData[0]?.avatar,name:userData[0]?.name,created_at:userData[0]?.created_at };
-            allData.push(userWithAvatar);
-          }
-        }
-      }
+    // console.log("user--------id0-----------",getBookMark)
 
-    if (allData) {
-      return allData;
-    }
+if(getBookMark){
+  return getBookMark
+}
 
-    
-
-      // if (postsData) {
-      //   return postsData;
-      // }
-    }
   } catch (error) {
     console.error("Error:", error);
     return null;
   }
 };
 
-export const removeBookmark = async (postId) => {
+export const removeBookmark = async (bookmarkId) => {
   try {
-    const data = await supabase.from("Bookmark").delete().eq("post", postId);
+    // console.log("back bookmark dara0=----------",bookmarkId)
+    const data = await supabase.from("Bookmark").delete().eq("id", bookmarkId).select("*");
 
     if (data) {
       alert("removed");
@@ -327,8 +198,7 @@ export const postLike = async (userId, postId) => {
       .eq("user", userId)
       .eq("post", postId);
 
-    // console.log("existData", existData.data.length);
-
+   
     if (existData.data.length < 1) {
       const { data, error } = await supabase
         .from("likes")

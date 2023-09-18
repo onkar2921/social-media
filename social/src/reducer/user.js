@@ -17,7 +17,7 @@ export const userReducer=(state,action)=>{
                 // console.log("payload for userId",action?.payload)
                 return{
                     ...state,
-                    userId:action?.payload?.id,
+                    userId:action?.payload,
                 }
      
 

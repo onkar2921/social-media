@@ -5,46 +5,35 @@ import { getBookmark, removeBookmark } from "@/server/posts";
 import { userContext } from "@/context/UserContextProvider";
 import Post from "@/components/Post";
 
-import { useRouter } from "next/navigation";
 
 export default function Page() {
-  const router = useRouter();
-  const currentPath = router.pathname;
-  // console.log("path", currentPath);
 
   const { state } = useContext(userContext);
-  const [userID, setUserID] = useState("");
-
+ 
   const [allBookmarks, setAllBookmarks] = useState([]);
-  useEffect(() => {
+
+  const getAllBookmarks = async () => {
     if (state?.userId) {
-      setUserID(state.userId);
-    }
-  }, [state?.userId]);
-
-  const [refresh, setRefresh] = useState(false);
-
-  useEffect(() => {
-    const getAllBookmarks = async () => {
-      if (userID) {
-        const data = await getBookmark(userID);
-        if (data) {
-          console.log("all bookmarks", data);
-          setAllBookmarks(data);
-        }
+      const data = await getBookmark(state?.userId);
+      if (data) {
+        // console.log("all bookmarks", data);
+        setAllBookmarks(data);
       }
-    };
+    }
+  };
+  
+  useEffect(() => {
+    
 
     getAllBookmarks();
-  }, [userID, refresh]);
+  }, [state?.userId]);
 
-  const handleRemoveBookmark = async (postId) => {
-    const data = await removeBookmark(postId);
+  const handleRemoveBookmark = async (bookmarkId) => {
+    const data = await removeBookmark(bookmarkId);
 
     if (data) {
       alert("bookmark removed");
-      setRefresh(true);
-      return;
+      getAllBookmarks();
     }
 
     console.log(data.error);
@@ -61,8 +50,7 @@ export default function Page() {
 
         <div className="h-full w-full mt-2 flex items-center justify-center flex-col">
           {allBookmarks?.map((item) => {
-
-            // console.log("item------------------",item)
+              // console.log("iytem--------------",item)
             return (
               <>
                 <Post
@@ -71,9 +59,13 @@ export default function Page() {
                   avatar={item?.avatar}
                   key={item?.id}
                   id={item?.id}
-                  content={item?.content}
+                  content={item?.posts?.content}
                   alldata={item}
-                  photo={item?.photos && item?.photos[0]?.data}
+                  user_name={
+                    // item?.user?.name
+                  item?.user_name
+                  }
+                  photo={item?.posts?.photos && item?.posts?.photos[0]?.data}
 
                 ></Post>
               </>

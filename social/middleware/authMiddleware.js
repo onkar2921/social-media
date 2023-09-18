@@ -1,9 +1,10 @@
 import { getUserData } from "@/app/helpers/authhelper";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation"
 
 async function authMiddleware(context) {
     
   const user = await getUserData();
+  // console.log("usweDAta auth---------------",user)
   const router = useRouter();
 
   if (!user) {

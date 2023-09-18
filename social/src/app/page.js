@@ -6,23 +6,50 @@ import PostPage from "@/components/PostPage";
 import { getUserData } from "./helpers/authhelper";
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { useContext } from "react";
+import { userContext } from "@/context/UserContextProvider";
+import { postContext } from "@/context/PostContextProvider";
+import { getAllPosts } from "@/server/posts";
+
 export default function Home() {
 
+const {state:postState,postDispatch}=useContext(postContext)
 
+
+const {state:userState,userDispatch}=useContext(userContext)
 
   const router=useRouter()
+
+
 const verify=async()=>{
   const user=await getUserData()
+
+  // userDispatch({ type: "SET_USERID", payload:user?.id});
+  // userDispatch({type:"SET_USER_INIT",payload:user?.user_metadata})
+  
+    
   // console.log(user)
   if(!user){
      router.push("/auth/signIn") 
   }
 
 }
+
+const getPosts = async () => {
+
+        const data = await getAllPosts();
+        if (data) {
+         await  postDispatch({type:"SET_POSTS",payload:data});
+        //  console.log("all posts---------------------",postState?.posts)
+        }
+      
+};
+
 useEffect(()=>{
   verify()
+  getPosts();
 
-},[])
+},[]) 
 
   
   return (
@@ -44,7 +71,7 @@ useEffect(()=>{
 
             <div>
               <Card>
-                <PostPage></PostPage>
+                <PostPage posts ={postState?.posts}></PostPage>
               </Card>
             </div>
           </div>

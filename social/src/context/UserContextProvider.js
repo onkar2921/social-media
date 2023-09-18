@@ -1,7 +1,7 @@
 'use client'
-import { createContext, useReducer,useEffect } from "react";
+import { createContext, useReducer,useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/initSupabase";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { getUserData } from "@/app/helpers/authhelper";
 
 import { userReducer } from "@/reducer/user";
@@ -27,13 +27,15 @@ const [state,userDispatch]=useReducer(userReducer,initalUser)
 
 
 const router = useRouter();
-
+// const [userId,setUserId]=useState("")
 
 const verify = async () => {
     const getUser = await getUserData();
-    if (getUser) {
-        // console.log("getuser",getUser)
-        userDispatch({type:"SET_USER_INIT",payload:getUser?.user_metadata})
+    // setUserId(getUser?.id)
+    if (getUser ) {
+     
+      userDispatch({ type: "SET_USERID", payload:getUser?.id});
+      userDispatch({type:"SET_USER_INIT",payload:getUser?.user_metadata})
       
         
     } else {
@@ -46,36 +48,8 @@ const verify = async () => {
 
 useEffect(() => {
   verify();
-
-
 }, []);
 
-
-
-const getUserFromDb = async (user) => {
-  
-  try {
-    const { email } = user;
-    const exist = await supabase
-      .from("user")
-      .select("*")
-      .eq("email", email);
-    
-    if (exist?.data) {
-      // console.log("exist data at user context",exist.data)
-
-      userDispatch({ type: "SET_USERID", payload: exist?.data[0] });
-    }
-  } catch (error) {
-    console.log(error);
-    throw error; 
-  }
-}
-
-// console.log("context userId",state.userId)
-useEffect(() => {
-  getUserFromDb(state);
-}, [state?.email]);
 
 
     return(

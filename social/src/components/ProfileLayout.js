@@ -28,7 +28,7 @@ import { updateUser } from "@/server/user";
 export default function ProfileLayout({ children, ...props }) {
   const { state, userDispatch } = useContext(userContext);
 
-  console.log("profile layout props", props);
+  // console.log("profile layout props", props);
 
   const router = useRouter();
 
@@ -86,11 +86,11 @@ export default function ProfileLayout({ children, ...props }) {
     };
 
     if (state?.userId === props?.profileId) {
-      // setShowbtn(true)
+      setShowbtn(true)
       setAlterUser(true);
     }
     if (state?.userId !== props?.profileId) {
-      setShowbtn(true);
+      setShowbtn(false);
 
       getUserInfoFromdb();
     }
@@ -99,22 +99,27 @@ export default function ProfileLayout({ children, ...props }) {
   const [background, setBackground] = useState("");
 
   const getBackground = async () => {
-    if (profileUser) {
-      const data = await getbackgroundfromStorage(profileUser?.id);
+    console.log("profileID----------------",profileUser?.id)
+    console.log("stat---ifd---------------",state?.userId)
+    
+    if(state?.userId){
+      const data = await getbackgroundfromStorage(state?.userId);
 
-      setBackground(data);
-    } else {
-      const data = await getbackgroundfromStorage(state.userId);
-
-      setBackground(data);
-      // console.log("back to display", data);
+      setBackground(data); 
+    }else{
+      if (profileUser) {
+        const data = await getbackgroundfromStorage(profileUser?.id);
+  
+  
+        setBackground(data);
+      } 
     }
   };
 
   useEffect(() => {
     getBackground();
-    console.log("profileuser-----------------------", profileUser);
-  }, [state?.userId, background, photo]);
+   
+  }, [state?.userId,profileUser?.id]);
 
   const BGURL = background
     ? `https://adefwkbyuwntzginghtp.supabase.co/storage/v1/object/public/background/public/${background}`
@@ -150,7 +155,7 @@ export default function ProfileLayout({ children, ...props }) {
                             // console.log("photo", photo);
                             if (photo) {
                               setPhoto(photo);
-                              setShowbtn(true);
+                              setShowbtn(false);
                             }
                           }}
                           className="hidden"
@@ -158,7 +163,7 @@ export default function ProfileLayout({ children, ...props }) {
                       </label>
                     ) : (
                       <>
-                        {showbtn && alterUser && (
+                        {!showbtn && alterUser && (
                           <button
                             onClick={sendBGtoStorage}
                             className="rounded-md flex items-center justify-center shadow-md bg-white border-md mb-4 h-10 w-40 absolute bottom-6 md:bottom-10 xs:right-4 sm:right-40 "

@@ -12,11 +12,6 @@ export default function page({params}) {
 
 
 
-// const {userId}=params
-// alert("hi")
-
-
-
 const [userPhotos, setUserPhotos] = useState([]);
 const [user,setUser]=useState(state?.userId)
 useEffect(() => {
@@ -26,11 +21,6 @@ useEffect(() => {
     setUser(params?.userId)
     
   }
-  
-  
-  
-  
-  // console.log("photo page parms=---------------",params.userId)
   
   const getUserAllPosts = async () => {
       if (params?.userId) {

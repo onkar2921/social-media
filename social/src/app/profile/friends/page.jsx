@@ -15,26 +15,9 @@ const {state}=useContext(userContext)
 
 const [allusers,setAllusers]=useState([])
 
-// useEffect(()=>{
-
-
-//   // const getUserFriends=async()=>{
-//   //     if(state?.userId){
-//   //       const {data}=await getFriends(state?.userId)
-
-//   //       if(data){
-//   //         console.log("user friend data",data)
-//   //       }
-//   //     }
-//   // }
-
-//   // getUserFriends()
-
 
  
 
-
-// },[state?.userId])
 
 
 useEffect(()=>{
@@ -42,7 +25,7 @@ useEffect(()=>{
     const data=await getUsers()
 
     if(data){
-        // alert("getting all users")
+       
         setAllusers(data)
        
     }
@@ -56,13 +39,6 @@ useEffect(()=>{
   
 },[])
 
-
-
-// console.log("all users",allusers)
-
-useEffect(()=>{
-  // console.log("state---",state)
-},[state])
 
 
   return (

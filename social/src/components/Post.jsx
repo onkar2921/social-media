@@ -2,13 +2,11 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import user from "../data/icons/user.png";
 import like from "../data/icons/like.png";
 import comment from "../data/icons/comment.png";
 import share from "../data/icons/share.png";
 import send from "../data/icons/send.png";
 import deleteIcon from "../data/icons/deleteIcon.png";
-// import report from "../data/icons/report.png";
 import close from "../data/icons/close.png";
 import bookmark from "../data/icons/bookmark.png";
 import bell from "../data/icons/bell.png";
@@ -31,73 +29,52 @@ import { addComment } from "@/server/posts";
 import { getAllComment } from "@/server/posts";
 import { removeComment } from "@/server/posts";
 
-//specific user data
-import { getUserInfo } from "@/server/user";
-
 //notifications
 
 import { addNotification } from "@/server/notification";
 
 export default function Post(props) {
-
-  
-  const { postDispatch, likeRefresh, allComments } = useContext(postContext);
+  const { postDispatch } = useContext(postContext);
 
   const { state } = useContext(userContext);
 
-  // console.log("user-----------------------------------",state)
 
-  const [userID, setUserID] = useState("");
-
-  useEffect(() => {
-    setUserID(state?.userId);
-  }, [state?.userId]);
-
+  // console.log("prods----------",state)
   const addToBookmark = async () => {
-    const data = await addBookmark(userID, props?.id);
+    const data = await addBookmark(state?.userId, props?.id);
 
     if (data) {
       alert("add to bookmark");
     }
-    console.log("failed in add to bookmark");
+    // console.log("failed in add to bookmark");
   };
 
   const deletepost = async () => {
-    const data = await deletePostFromTbale(props?.id, userID);
+    const data = await deletePostFromTbale(props?.id, state?.userId);
     postDispatch({ type: "SETREFRESH" });
     if (data) {
       alert("post deleted");
     }
   };
 
-  const [imageUrl, setImageUrl] = useState("");
   const [dropDown, setDropDown] = useState(false);
-
-  const getImage = async () => {
-    const imageData = await getImagesfromStorage("photos/" + props?.photo);
-
-    setImageUrl(
-      `https://adefwkbyuwntzginghtp.supabase.co/storage/v1/object/public/photos/${props?.photo?.path}`
-    );
-  };
-  useEffect(() => {
-    getImage();
-  }, []);
 
   const [likestatus, setLikeStatus] = useState(false);
 
   const Notify = async () => {
-    // alert("hit notify front");
-    const notifyData = await addNotification(userID, props?.id, "liked a post");
-    if (notifyData) {
-      // console.log("notfy for liked");
-    }
+    const notifyData = await addNotification(
+      state?.userId,
+      props?.alldata?.posts?.id,
+      "liked a post"
+    );
   };
 
   const handleLike = async () => {
-    const data = await postLike(userID, props?.id);
-    // console.log("post like data",data)
+    console.log("props.id--------", props?.alldata?.posts?.id);
+    const data = await postLike(state?.userId, props?.alldata?.posts?.id);
+
     setLikeStatus(true);
+    likeCount();
     localStorage.setItem("verifyLike", true);
 
     Notify();
@@ -107,14 +84,13 @@ export default function Post(props) {
     }
   };
 
-  const [refresh, setRefresh] = useState(false);
-
   const handleDislkie = async () => {
     try {
-      const data = await dislikePost(userID, props?.id);
+      const data = await dislikePost(state?.userId, props?.alldata?.posts?.id);
       if (data) {
         alert("post is disliked");
-        // console.log("disliked post data", data);
+        likeCount();
+
         localStorage.setItem("verifyLike", false);
 
         setLikeStatus(false);
@@ -134,50 +110,39 @@ export default function Post(props) {
   const [count, setCount] = useState(0);
 
   const likeCount = async () => {
-    const data = await getLikeCount(props?.id);
+    const data = await getLikeCount(props?.alldata?.posts?.id);
 
     if (data) {
-      // console.log("like count data------",data)
       setCount(data);
     }
   };
   useEffect(() => {
     const check = localStorage.getItem("verifyLike");
     if (check && count > 1) {
+      likeCount();
       setLikeStatus(!likestatus);
     }
   }, []);
 
-  useEffect(() => {
-    likeCount();
-  }, [likestatus, props?.id, refresh, count]);
-
-  //comment
-
-  // const [allComments,setAllComments]=useState([])
-  const [commentRefresh, setCommentRefresh] = useState(false);
-
- 
   const functionCountComment = () => {
-    const filterComments = allComments?.filter(
+    const filterComments = props?.comments?.filter(
       (item) => item?.post === props?.id
     );
+
     const len = filterComments?.length;
+
     setCommentCount(len);
   };
 
-  // console.log("props----",props)
-
   const [text, setText] = useState("");
+
   const handleComment = async () => {
-    // alert("hit comment front")
-    const data = await addComment(userID, props?.id, text);
+    const data = await addComment(state?.userId, props?.id, text);
 
     alert("comment added");
     setText("");
     fetchComments();
-    setCommentRefresh(!commentRefresh);
-    // functionCountComment()
+    functionCountComment();
   };
 
   const fetchComments = async () => {
@@ -185,36 +150,28 @@ export default function Post(props) {
     postDispatch({ type: "SETCOMMENTS", payload: data });
   };
 
-  //   console.log("comments data",allComments)
-
   const handleDeleteComment = async (commentId) => {
     const data = await removeComment(commentId);
     fetchComments();
     alert("comment deleted");
-    setCommentRefresh(!commentRefresh);
-    // functionCountComment()
+    functionCountComment();
   };
 
   const [commentCount, setCommentCount] = useState(0);
 
   useEffect(() => {
-    fetchComments();
-  }, [commentRefresh]);
-
-  useEffect(() => {
+    // fetchComments();
     functionCountComment();
-  }, [commentRefresh]);
+  }, []);
+
 
   const [show, setShow] = useState(false);
 
   const seeComments = async () => {
-    // alert("hited to show")
     setShow(!show);
   };
 
-  const [specificUser, setSpecificUser] = useState("");
 
-  
   function timeAgo(timestamp) {
     const currentDate = new Date();
     const postDate = new Date(timestamp);
@@ -239,37 +196,26 @@ export default function Post(props) {
     }
   }
 
-  const fetchUser = async () => {
-    const data = await getUserInfo(props?.alldata?.author);
-    setSpecificUser(data[0]);
-    console.log("all users data",data[0])
-  };
 
   const [postTime, setPostTime] = useState(0);
 
   useEffect(() => {
-    fetchUser();
+  
 
     const timestamp = props?.alldata?.created_at;
     const timeAgoString = timeAgo(timestamp);
-    // console.log("Time ago:", timeAgoString);
+
     setPostTime(timeAgoString);
   }, []);
-
 
   const generatedURLPath = `/profile/${props?.alldata?.author}`;
 
   const handleLinkClick = () => {
     const generatedURLPath = `/profile/${props?.alldata?.author}`;
-    // console.log("Generated URL Path:", generatedURLPath);
 
-    // Navigate to the generated URL path
-    // console.log("url",generatedURLPath)
-    alert("url",generatedURLPath)
-    // router.push(generatedURLPath);
     router.push({
       pathname: generatedURLPath,
-      query: { profileId: props?.alldata?.author } 
+      query: { profileId: props?.alldata?.author },
     });
   };
 
@@ -291,12 +237,8 @@ export default function Post(props) {
           <div className=" w-full h-full flex items-center justify-between  ">
             <div className="w-full h-full">
               <p>
-                {/* <Link href={`/profile/${props?.alldata?.author}`}>
-                  <span className="font-bold">{specificUser?.name}</span> shared a
-                </Link> */}
-
                 <Link href={generatedURLPath} onClick={handleLinkClick}>
-                  <span className="font-bold">{specificUser?.name}</span> shared
+                  <span className="font-bold">{props?.user_name}</span> shared
                   a
                 </Link>
                 <span className="font-bold  text-blue-500"> post</span>
@@ -358,10 +300,6 @@ export default function Post(props) {
                         Delete
                       </p>
                     </div>
-                    {/* <div className="flex p-2">
-                      <Image src={report} height={10} width={20} alt="report" />
-                      <p className="ml-3">Report</p>
-                    </div> */}
                   </div>
                 )}
               </div>
@@ -371,23 +309,15 @@ export default function Post(props) {
 
         {/* image div */}
         <div className="w-full h-full  rounded-md shadow-md p-3  md:block xs:flex items-center justify-center mt-4 mb-4">
-          {/* <Image
-            src={photo}
-            height={100}
-            width={200}
-            alt="profile image"
-            className="rounded-full shadow-sm mr-6"
-          ></Image> */}
-
-         {
-          props?.photo &&  <Image
-          src={imageUrl}
-          height={100}
-          width={400}
-          alt="post image"
-          className="rounded-md mb-2 shadow-sm mr-6 w-full"
-        ></Image>
-         }
+          {props?.photo && (
+            <Image
+              src={`https://adefwkbyuwntzginghtp.supabase.co/storage/v1/object/public/photos/${props?.photo?.path}`}
+              height={100}
+              width={400}
+              alt="post image"
+              className="rounded-md mb-2 shadow-sm mr-6 w-full"
+            ></Image>
+          )}
 
           <p>{props?.content}</p>
         </div>
@@ -440,6 +370,7 @@ export default function Post(props) {
         </div>
 
         <div className="w-full flex align-center justify-center flex-col p-2  bg">
+          {/* { console.log("comments to show -------------------",props?.comments)} */}
           {show && (
             <>
               {props?.comments?.map((item) => {
@@ -453,7 +384,7 @@ export default function Post(props) {
                         <p className="w-1/2 m-2 shadow-lg pl-2">
                           {item?.comment}
                         </p>
-                        {userID === item?.user && (
+                        {state?.userId === item?.user && (
                           <button onClick={() => handleDeleteComment(item?.id)}>
                             delete
                           </button>
@@ -468,6 +399,8 @@ export default function Post(props) {
         </div>
 
         <div className="flex w-fll h-full">
+
+          {/* {console.log("stat---------",state)} */}
           <Image
             src={state?.avatar}
             height={40}

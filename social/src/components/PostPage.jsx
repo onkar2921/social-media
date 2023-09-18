@@ -3,19 +3,15 @@ import Post from "./Post";
 import { useEffect } from "react";
 import { useContext } from "react";
 import { postContext } from "@/context/PostContextProvider";
-// import { userContext } from "@/context/UserContextProvider";
-// import { getUserPosts } from "@/server/posts";
+
 //comments
 
 import { getAllComment } from "@/server/posts";
 
-
-
-
 export default function PostPage(props) {
 
 
-  const { posts, postDispatch, allComments } = useContext(postContext);
+  const {state,posts, postDispatch, allComments } = useContext(postContext);
 
   const postorender =  props?.posts ?props?.posts : posts;
 
@@ -25,17 +21,18 @@ export default function PostPage(props) {
   const fetchComments = async () => {
     const data = await getAllComment();
     if (data) {
+      // console.log("data fro comment---------------",data)
       postDispatch({ type: "SETCOMMENTS", payload: data });
-      // setAllComments(data)
+    
     }
   };
 
-  // console.log("comments data", allComments);
+  // console.log("comments data",state?.allComments);
 
   useEffect(() => {
     fetchComments();
    
-  }, [posts,props?.posts]);
+  }, []);
 
   return (
     <>
@@ -43,16 +40,20 @@ export default function PostPage(props) {
 <div className="w-full h-full p-2 ">
 
   {postorender?.map((item)=>{
+
+    // console.log("item-------------",item)
+   
     return <>
 
 <Post
-      avatar={item?.avatar}
+      avatar={item?.user?.avatar}
       alldata={item}
       key={item?.id}
       id={item?.id}
+      user_name={item?.user?.name}
       content={item?.content}
       photo={item?.photos && item?.photos[0]?.data}
-      comments={allComments}
+      comments={state?.allComments}
       ></Post>
     
     </>
