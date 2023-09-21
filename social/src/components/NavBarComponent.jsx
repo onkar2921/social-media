@@ -20,9 +20,15 @@ if(!error){
 
 }
  }
+
+
+
+
   return (
     <>
-    <div className="w-[80%] h-full flex relative">
+
+
+    <div className="w-[80%] h-full flex relative ">
       <div className=" w-[22%] h-full md:flex hidden bg-white border-md mb-2 p-2 shadow-md m-2 flex-col items-center sm:block fixed ">
         <h3 className="text-2xl w-full m-2 items-center hover:text-slate-200 hover:cursor-pointer ">Navigation</h3>
         <div className="flex w-full  items-center  p-2 hover:cursor-pointer ">

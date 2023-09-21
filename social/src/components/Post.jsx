@@ -310,20 +310,23 @@ export default function Post(props) {
         </div>
 
         {/* image div */}
-        <div className="w-full h-full  rounded-md shadow-md p-3  md:block xs:flex items-center justify-center mt-4 mb-4">
+        <div className="w-full h-full  rounded-md shadow-md p-3  md:block xs:flex items-center justify-center xs:flex-col mt-4 mb-4">
           {props?.photo && (
+            <div className="flex items-center justify-center   ">
+
             <Image
               src={`https://adefwkbyuwntzginghtp.supabase.co/storage/v1/object/public/photos/${props?.photo?.path}`}
-              height={100}
+              height={300}
               width={400}
               alt="post image"
-              className="rounded-md mb-2 shadow-sm mr-6 w-full"
-            ></Image>
+              className="rounded-md mb-2 shadow-sm mr-6   xs:ml-4"
+              ></Image>
+              </div>
           )}
 
-          <p>{props?.content}</p>
+          <p className="mt-4 flex items-center justify-center">{props?.content}</p>
         </div>
-        <div className="w-full h-full rounded-md shadow-md p-3 flex items-center mb-4">
+        <div className="w-full h-full rounded-md shadow-md p-3 flex items-center mb-4 ">
           <div className="flex mr-6">
             {likestatus ? (
               <Image

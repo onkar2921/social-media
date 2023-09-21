@@ -83,6 +83,7 @@ export default function PostFormCard() {
       <div className="w-full h-full p-2 md:flex sm:p-6 flex-col items-start    ">
         
         <div className="md:w-[80%] h-full flex p-2 mb-2">
+          
           <Image
             src={url}
             height={60}
@@ -122,36 +123,6 @@ export default function PostFormCard() {
                 <p className="mr-1">Photos</p>
               </label>
             </div>
-            {/* <div className="flex items-center ">
-              <Image
-                src={profile}
-                height={20}
-                width={20}
-                alt="profile image"
-                className="rounded-full shadow-sm xs:mr-2 md:m-2 "
-              ></Image>
-              <p className="mr-1">People</p>
-            </div>
-            <div className="flex items-center ">
-              <Image
-                src={checkin}
-                height={20}
-                width={20}
-                alt="check in"
-                className="rounded-full shadow-sm xs:mr-1 md:m-2 "
-              ></Image>
-              <p className="xs:mr-2 md:mr-1">Check-In</p>
-            </div>
-            <div className="flex items-center">
-              <Image
-                src={smile}
-                height={20}
-                width={20}
-                alt="smile"
-                className="rounded-full shadow-sm xs:mr-1 md:m-2 "
-              ></Image>
-              <p className=" xs:mr-2 md:mr-10">Mood</p>
-            </div> */}
             <button
               className="bg-blue-500 shadow-xl rounded-md px-3 ml-6 text-white"
               onClick={handlePost}

@@ -61,10 +61,15 @@ useEffect(() => {
                 <Card>
                   {
                     userPhotos?.map((item,ind)=>{
-                      return<>
+                      // console.log("photo",item)
+                      if(item!==undefined){
+
+                        return<>
                       <Photos key={ind} photo={item}></Photos>
                       </>
-                    })
+                    }
+                  }
+                    )
                   }
                 </Card>
               </div>

@@ -22,6 +22,9 @@ import { addProfileBg } from "@/server/user";
 import { getbackgroundfromStorage } from "@/server/user";
 import { getUserInfo } from "@/server/user";
 
+
+import handelLogout from "@/app/helpers/authhelper"
+
 //update user
 import { updateUser } from "@/server/user";
 
@@ -127,6 +130,36 @@ export default function ProfileLayout({ children, ...props }) {
 
   const url = profileUser ? profileUser.avatar : state?.avatar || "";
 
+  
+ const [windowWidth, setWindowWidth] = useState(0);
+
+ const updateWindowSize = () => {
+   setWindowWidth(window.innerWidth);
+
+ };
+
+
+ useEffect(() => {
+   updateWindowSize(); 
+ 
+   window.addEventListener('resize', updateWindowSize);
+
+  
+   return () => {
+     window.removeEventListener('resize', updateWindowSize);
+   };
+ }, []);
+
+
+ const afterLogout=async()=>{
+  const error=await handelLogout()
+  if(!error){
+    router.push("/auth/signIn")
+  
+  }
+   }
+  
+
   return (
     <>
       <div className="w-full h-full md:min-w-6xl sm:flex  p-2">
@@ -136,17 +169,21 @@ export default function ProfileLayout({ children, ...props }) {
               <div className="xs:w-full h-full flex  flex-col p-2 relative">
                 <div className="flex h-full w-full ">
                   <div className="h-full w-full flex items-center justify-around relative">
+
+                      
                     <Image
                       // bg url
                       src={BGURL}
                       alt="user profile-bg"
-                      height={100}
+                      height={200}
                       width={200}
-                      className=" md:w-[80%] xs:w-[100%] xs:h-[300px] h-auto xs:p-1 md:p-6 mb-3 rounded-md"
-                    ></Image>
+                      className=" md:w-[80%] md:h-[350px] xs:w-[100%] xs:h-[300px] h-auto xs:p-1 md:p-6 mb-3 rounded-md"
+                      ></Image>
+                 
 
                     {showbtn && alterUser ? (
-                      <label className="rounded-md flex items-center shadow-md bg-white border-md mb-4 h-10 w-40 absolute bottom-6 md:bottom-10 xs:right-4 sm:right-40 cursor-pointer">
+                      <>
+                      <label className="rounded-md flex items-center shadow-md bg-white border-md mb-4 h-10 w-40 absolute bottom-6 md:bottom-10 xs:right-4 sm:right-40  cursor-pointer">
                         Change background
                         <input
                           type="file"
@@ -159,8 +196,12 @@ export default function ProfileLayout({ children, ...props }) {
                             }
                           }}
                           className="hidden"
-                        />
+                          />
                       </label>
+                     
+                          </>
+
+                      
                     ) : (
                       <>
                         {!showbtn && alterUser && (
@@ -178,6 +219,7 @@ export default function ProfileLayout({ children, ...props }) {
 
                 <div className="flex w-full h-full  items-center p-2">
                   <div className="w-[20%] h-full">
+                    
                     <Image
                       src={url}
                       alt="user profile"
@@ -193,7 +235,13 @@ export default function ProfileLayout({ children, ...props }) {
                       <p>
                         {profileUser ? profileUser?.address : state?.address}
                       </p>
+                 
                     </div>
+                    { windowWidth<620 &&  
+
+                          <button className="bg-black text-white p-1 rounded-sm mr-2" onClick={afterLogout}>Logout</button>
+}
+             
                     <div>
                       {/* update option for name and address */}
 
